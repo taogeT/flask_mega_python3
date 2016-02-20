@@ -73,6 +73,9 @@ def after_login(resp):
         user = User(nickname=nickname, email=resp.email)
         db.session.add(user)
         db.session.commit()
+        # make the user follow him/herself
+        db.session.add(user.follow(user))
+        db.session.commit()
     remember_me = session.get('remember_me', False)
     session.pop('remember_me', None)
     login_user(user, remember=remember_me)
@@ -119,3 +122,59 @@ def notfound_error(error):
 def internal_error(error):
     db.session.rollback()
     return render_template('500.html'), 500
+
+
+@app.route('/follow/<nickname>')
+@login_required
+def follow(nickname):
+    user = User.query.filter_by(nickname=nickname).first()
+    if user is None:
+        flash('User {} not found.'.format(nickname))
+        return redirect(url_for('index'))
+    if user == g.user:
+        flash('You can\'t follow yourself!')
+        return redirect(url_for('user', nickname=nickname))
+    u = g.user.follow(user)
+    if u is None:
+        flash('Cannot follow {}'.format(nickname))
+        return redirect(url_for('user', nickname=nickname))
+    db.session.add(u)
+    db.session.commit()
+    flash('You are now following {}'.format(nickname))
+    return redirect(url_for('user', nickname=nickname))
+
+
+@app.route('/unfollow/<nickname>')
+@login_required
+def unfollow(nickname):
+    user = User.query.filter_by(nickname=nickname).first()
+    if user is None:
+        flash('User {} not found.'.format(nickname))
+        return redirect(url_for('index'))
+    if user == g.user:
+        flash('You can\'t unfollow yourself!')
+        return redirect(url_for('user', nickname=nickname))
+    u = g.user.follow(user)
+    if u is None:
+        flash('Cannot unfollow {}'.format(nickname))
+        return redirect(url_for('user', nickname=nickname))
+    db.session.add(u)
+    db.session.commit()
+    flash('You have stop following {}'.format(nickname))
+    return redirect(url_for('user', nickname=nickname))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -3,8 +3,13 @@ from hashlib import md5
 from . import db
 
 
-class User(db.Model):
+followlink = db.Table('followlink',
+    db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
+)
 
+
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nickname = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
@@ -12,10 +17,10 @@ class User(db.Model):
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime)
     followed = db.relationship('User',
-                               secondary=Followers.table,
-                               primaryjoin=(Followers.table.c.follower_id == id),
-                               secondaryjoin=(Followers.table.c.followed_id == id),
-                               backref=db.backref('followers', lazy='dynamic'),
+                               secondary=followlink,
+                               primaryjoin=(followlink.c.follower_id == id),
+                               secondaryjoin=(followlink.c.followed_id == id),
+                               backref=db.backref('follower', lazy='dynamic'),
                                lazy='dynamic')
 
     @property
@@ -36,6 +41,24 @@ class User(db.Model):
     def avatar(self, size):
         return 'https://gravatar.duoshuo.com/avatar/{}?d=mm&s={}'.format(md5(self.email.encode('utf-8')).hexdigest(), size)
 
+    def follow(self, user):
+        if not self.is_following(user):
+            self.followed.append(user)
+            return self
+
+    def unfollow(self, user):
+        if self.is_following(user):
+            self.followed.remove(user)
+            return self
+
+    def is_following(self, user):
+        return self.followed.filter(followlink.c.followed_id == user.id).count() > 0
+
+    def followed_posts(self):
+        return Post.query.join(followlink, followlink.c.followed_id == Post.user_id) \
+                         .filter(followlink.c.follower_id == self.id) \
+                         .order_by(Post.timestamp.desc())
+
     @staticmethod
     def make_unique_nickname(nickname):
         if not User.query.filter_by(nickname=nickname).first():
@@ -49,11 +72,6 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(self.nickname)
-
-
-class Followers(db.Model):
-    follower_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    followed_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
 class Post(db.Model):
