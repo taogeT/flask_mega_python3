@@ -3,27 +3,29 @@
 from flask import render_template, flash, redirect, g, session, url_for
 from flask import request
 from . import app, lm, oid, db
-from .forms import LoginForm, EditForm
-from .models import User
+from .forms import LoginForm, EditForm, PostForm, SeachForm
+from .models import User, Post
 from flask_login import login_user, current_user, login_required, logout_user
 from datetime import datetime
 
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
+@app.route('/index/<int:page>', methods=['GET', 'POST'])
 @login_required
-def index():
-    posts = [
-        {
-            'author': {'nickname': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'nickname': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-    ]
-    return render_template('index.html', title='Home', user=g.user, posts=posts)
+def index(page=1):
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(body=form.post.data, timestamp=datetime.utcnow(), author=g.user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post is now live!')
+        return redirect(url_for('index'))
+    posts = g.user.followed_posts().paginate(page, app.config['POSTS_PER_PAGE'], False)
+    return render_template('index.html',
+                           title='Home',
+                           form=form,
+                           posts=posts)
 
 
 @lm.user_loader
@@ -38,6 +40,7 @@ def before_request():
         g.user.last_seen = datetime.utcnow()
         db.session.add(g.user)
         db.session.commit()
+        g.search_form = SeachForm()
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -73,7 +76,8 @@ def after_login(resp):
         user = User(nickname=nickname, email=resp.email)
         db.session.add(user)
         db.session.commit()
-        # make the user follow him/herself
+    # make the user follow him/herself
+    if not user.is_following(user):
         db.session.add(user.follow(user))
         db.session.commit()
     remember_me = session.get('remember_me', False)
@@ -83,16 +87,14 @@ def after_login(resp):
 
 
 @app.route('/user/<nickname>')
+@app.route('/user/<nickname>/<int:page>')
 @login_required
-def user(nickname):
+def user(nickname, page=1):
     user = User.query.filter_by(nickname=nickname).first()
     if not user:
         flash('User {} not found.'.format(nickname))
         return redirect(url_for('index'))
-    posts = [
-        {'author': user, 'body': 'Test post #1'},
-        {'author': user, 'body': 'Test post #2'}
-    ]
+    posts = user.posts.paginate(page, app.config['POSTS_PER_PAGE'], False)
     return render_template('user.html', user=user, posts=posts)
 
 
@@ -164,7 +166,20 @@ def unfollow(nickname):
     return redirect(url_for('user', nickname=nickname))
 
 
+@app.route('/search', methods=['POST'])
+@login_required
+def search():
+    if g.search_form.validate_on_submit():
+        return redirect(url_for('search_result', query=g.search_form.search.data))
+    return redirect(url_for('index'))
 
+
+@app.route('/search_result/<query>')
+@login_required
+def search_result(query):
+    resultlist = Post.query.whoosh_search(query, app.config['MAX_SEARCH_RESULTS']).all()
+    return render_template('search_result.html',
+                           query=query, resultlist=resultlist)
 
 
 

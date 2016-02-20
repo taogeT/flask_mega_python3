@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 from hashlib import md5
-from . import db
+from . import db, app
+from flask_whooshalchemy import whoosh_index
 
 
 followlink = db.Table('followlink',
@@ -75,6 +76,8 @@ class User(db.Model):
 
 
 class Post(db.Model):
+    __searchable__ = ['body']
+
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime)
@@ -82,3 +85,6 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
+
+whoosh_index(app, Post)
