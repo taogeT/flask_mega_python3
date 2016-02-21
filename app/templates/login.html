@@ -4,7 +4,7 @@
 <form action="" method="post" name="login">
     {{form.hidden_tag()}}
     <p>
-        Please enter your OpenID:<br>
+        {{ _('Please enter your OpenID') }}:<br>
         {{form.openid(size=80)}}<br>
         {% for error in form.openid.errors %}
           <span style="color: red">[{{ error }}]</span>
@@ -13,18 +13,18 @@
           <a href="javascript:set_openid('{{pr.url}}', '{{pr.name}}');">{{pr.name}}</a>
         {% endfor %}
     </p>
-    <p>{{form.remember_me}} Remember Me</p>
-    <p><input type="submit" value="Sign In"></p>
+    <p>{{form.remember_me}} {{ _('Remember Me') }}</p>
+    <p><input type="submit" value="{{ _('Sign In') }}"></p>
 </form>
 <script>
 function set_openid(openid, pr){
-    u = openid.search('<username>')
+    u = openid.search("<username>")
     if(u != -1){
-        user = prompt('Enter your ' + pr + ' username:')
-        openid = openid.replace('<username>', user)
+        user = prompt("Enter your " + pr + " username:")
+        openid = openid.replace("<username>", user)
     }
-    form = document.forms['login']
-    form.elements['openid'].value = openid
+    form = document.forms["login"]
+    form.elements["openid"].value = openid
 }
 </script>
 {% endblock %}

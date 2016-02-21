@@ -1,11 +1,16 @@
 # -*- coding: UTF-8 -*-
 
 from flask import Flask
+from flask.json import JSONEncoder
+from speaklater import is_lazy_string
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.openid import OpenID
+from flask.ext.mail import Mail
+from flask.ext.babel import Babel, lazy_gettext
 from config import basedir, ADMINS
 from config import MAIL_USERNAME, MAIL_PASSWORD, MAIL_SERVER, MAIL_PORT
+from .momentjs import momentjs
 import os
 
 
@@ -15,7 +20,10 @@ db = SQLAlchemy(app)
 lm = LoginManager()
 lm.init_app(app)
 lm.login_view = 'login'
+lm.login_message = lazy_gettext('Please log in to access this page.')
 oid = OpenID(app, os.path.join(basedir, 'tmp'))
+mail = Mail(app)
+babel = Babel(app)
 
 if not app.debug:
     import logging
@@ -41,5 +49,17 @@ if not app.debug:
     app.logger.addHandler(file_handler)
     # end
     app.logger.info('microblog startup')
+
+app.jinja_env.globals['momentjs'] = momentjs
+
+
+class CustomJSONEncoder(JSONEncoder):
+    """This class adds support for lazy translation texts to Flask's
+    JSON encoder. This is necessary when flashing translated texts."""
+    def default(self, obj):
+        return str(obj) if is_lazy_string(obj) else super(CustomJSONEncoder, self).default(obj)
+
+app.json_encoder = CustomJSONEncoder
+
 
 from . import views, models

@@ -1,0 +1,215 @@
+# Chinese translations for PROJECT.
+# Copyright (C) 2016 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2016-02-21 22:32+0800\n"
+"PO-Revision-Date: 2016-02-21 20:00+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.2.0\n"
+
+#: app/__init__.py:23
+msgid "Please log in to access this page."
+msgstr "请先通过此页面登录."
+
+#: app/emails.py:23
+#, python-format
+msgid "[microblog] %(nickname)s is now following you!"
+msgstr "[microblog] 用户 %(nickname)s 已经关注了你!"
+
+#: app/forms.py:28
+msgid ""
+"This nickname has invalid characters. Please use letters, numbers, dots "
+"and underscores only."
+msgstr "用户名格式不正确。请仅使用大小写字母、数字、英文圆点和下划线完成取名。"
+
+#: app/forms.py:31
+msgid "This nickname is already in use. Please choose another one."
+msgstr "用户名已经被占用。请使用另一个用户名。"
+
+#: app/views.py:26
+msgid "Your post is now live!"
+msgstr "你的博文已保存"
+
+#: app/views.py:29
+#: app/templates/base.html:26
+msgid "Home"
+msgstr "首页"
+
+#: app/views.py:72
+#: app/templates/login.html:17
+msgid "Sign In"
+msgstr "提交"
+
+#: app/views.py:85
+msgid "Invalid login. Please try again."
+msgstr "错误登陆。请再试一次。"
+
+#: app/views.py:113
+#: app/views.py:152
+#: app/views.py:173
+#, python-format
+msgid "User %(nickname)s not found."
+msgstr "用户 %(nickname)s 不存在。"
+
+#: app/views.py:128
+msgid "Your changes have been saved."
+msgstr "你的更改已经被保存。"
+
+#: app/views.py:155
+msgid "You can't follow yourself!"
+msgstr "你不可以关注你自己！"
+
+#: app/views.py:159
+#, python-format
+msgid "Cannot follow %(nickname)s"
+msgstr "不能关注 %(nickname)s"
+
+#: app/views.py:163
+#, python-format
+msgid "You are now following %(nickname)s"
+msgstr "你关注了 %(nickname)s"
+
+#: app/views.py:176
+msgid "You can't unfollow yourself!"
+msgstr "你不可以取消关注你自己！"
+
+#: app/views.py:180
+#, python-format
+msgid "Cannot unfollow %(nickname)s"
+msgstr "你取消关注了 %(nickname)s"
+
+#: app/views.py:184
+#, python-format
+msgid "You have stop following %(nickname)s"
+msgstr "你已经取消关注了 %(nickname)s"
+
+#: app/views.py:214
+msgid "Post not found."
+msgstr "博文记录不存在."
+
+#: app/views.py:217
+msgid "You cannot delete this post."
+msgstr "不可删除此博文."
+
+#: app/views.py:221
+#, fuzzy
+msgid "Your post has been deleted."
+msgstr "你的博文已保存"
+
+#: app/templates/404.html:4
+msgid "File Not Found"
+msgstr "未找到文件"
+
+#: app/templates/500.html:4
+msgid "An unexpected error has occurred"
+msgstr "一个意料之外的错误发生"
+
+#: app/templates/500.html:5
+msgid "The administrator has been notified. Sorry for the inconvenience!"
+msgstr "已经通知管理员。给你带来的不便深感抱歉！"
+
+#: app/templates/base.html:13
+#: app/templates/base.html:15
+#: app/templates/base.html:23
+msgid "Microblog"
+msgstr "微型博客"
+
+#: app/templates/base.html:28
+msgid "Your Profile"
+msgstr "用户信息"
+
+#: app/templates/base.html:29
+msgid "Logout"
+msgstr "登出"
+
+#: app/templates/base.html:33
+msgid "Search"
+msgstr "搜索"
+
+#: app/templates/edit.html:4
+msgid "Edit Your Profile"
+msgstr "编辑用户信息"
+
+#: app/templates/edit.html:9
+msgid "Your nickname"
+msgstr "你的用户名"
+
+#: app/templates/edit.html:18
+msgid "About yourself"
+msgstr "关于我"
+
+#: app/templates/edit.html:23
+msgid "Save Changes"
+msgstr "保存修改"
+
+#: app/templates/index.html:7
+msgid "Say Something"
+msgstr "博文内容"
+
+#: app/templates/index.html:21
+msgid "Post"
+msgstr "博文"
+
+#: app/templates/login.html:7
+msgid "Please enter your OpenID"
+msgstr "输入你的OpenID"
+
+#: app/templates/login.html:16
+msgid "Remember Me"
+msgstr "记住我"
+
+#: app/templates/post.html:7
+#: app/templates/user.html:12
+msgid "Last seen on"
+msgstr "最后登陆时间"
+
+#: app/templates/post.html:10
+msgid "Delete"
+msgstr "删除"
+
+#: app/templates/post_paginate.html:6
+#: app/templates/post_paginate.html:11
+msgid "Newer"
+msgstr "更新"
+
+#: app/templates/post_paginate.html:17
+#: app/templates/post_paginate.html:22
+msgid "Older"
+msgstr "更旧"
+
+#: app/templates/search_result.html:3
+#, python-format
+msgid "Search results for \"%(query)s\""
+msgstr "\"%(query)s\" 的搜索结果"
+
+#: app/templates/user.html:9
+msgid "User"
+msgstr "用户"
+
+#: app/templates/user.html:14
+msgid "follower"
+msgstr "关注者"
+
+#: app/templates/user.html:16
+msgid "Edit"
+msgstr "编辑"
+
+#: app/templates/user.html:18
+msgid "Unfollow"
+msgstr "取消关注"
+
+#: app/templates/user.html:20
+msgid "Follow"
+msgstr "关注"
+

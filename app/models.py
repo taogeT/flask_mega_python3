@@ -1,7 +1,8 @@
 # -*- coding: UTF-8 -*-
 from hashlib import md5
 from . import db, app
-from flask_whooshalchemy import whoosh_index
+from flask.ext.whooshalchemy import whoosh_index
+import re
 
 
 followlink = db.Table('followlink',
@@ -71,6 +72,10 @@ class User(db.Model):
                 return new_nickname
             version += 1
 
+    @staticmethod
+    def make_valid_nickname(nickname):
+        return re.sub('[^a-zA-Z0-9_\.]', '', nickname)
+
     def __repr__(self):
         return '<User {}>'.format(self.nickname)
 
@@ -82,6 +87,7 @@ class Post(db.Model):
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    language = db.Column(db.String(5))
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)

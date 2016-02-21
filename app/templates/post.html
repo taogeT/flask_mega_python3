@@ -1,6 +1,15 @@
-<table>
+<table class="table table-hover">
   <tr valign="top">
     <td><img src="{{post.author.avatar(50)}}"></td>
-    <td><i>{{post.author.nickname}}</i><br>says: <b>{{post.body}}</b></td>
+    <td>
+      <a href="{{ url_for('user', nickname=post.author.nickname)}}">{{post.author.nickname}}</a>
+      {% if post.author.last_seen %}
+      | <i>{{ _('Last seen on') }}: {{momentjs(post.author.last_seen).format('YYYY-MM-DD, HH:mm:ss')}}</i>
+      {% endif %}
+      {% if post.author.id == g.user.id %}
+      | <i><a href="{{ url_for('delete', post_id=post.id) }}">{{ _('Delete') }}</a></i>
+      {% endif %}
+      <br><b>{{post.body}}</b>
+    </td>
   </tr>
 </table>
